@@ -190,7 +190,7 @@ function autoresponder_admin_settings() {
     '#title' => 'Hide select',
     '#disabled' => $hide,
     '#default_value' => variable_get('autoresponder_hide_select', FALSE),
-    '#description' => t('Hide select list control and show only text description of set if only one set is  present.')
+    '#description' => t('Hide select list control of mailing set.')
   );
   $form['block_settings']['autoresponder_hide_email'] = array(
     '#type' => 'checkbox',
@@ -203,6 +203,36 @@ function autoresponder_admin_settings() {
     '#title' => 'Hide sets list',
     '#default_value' => variable_get('autoresponder_hide_sets', FALSE),
     '#description' => t('Hide subscribed sets list')
+  );
+  $form['block_settings']['autoresponder_size'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Email inputbox size',
+    '#default_value' => variable_get('autoresponder_size', 25),
+    '#description' => t('Size of email input textbox')
+  );
+  $form['block_settings']['autoresponder_remark'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Remark text',
+    '#default_value' => variable_get('autoresponder_remark', FALSE),
+    '#description' => t('Small font note in subscription form')
+  );
+  $form['block_settings']['autoresponder_select_label'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Select set label',
+    '#default_value' => variable_get('autoresponder_select_label', 'Select set'),
+    '#description' => t('Set selectbox label')
+  );
+  $form['block_settings']['autoresponder_submit'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Submit button text',
+    '#default_value' => variable_get('autoresponder_submit', 'Subscribe'),
+    '#description' => t('Subscribe button label')
+  );
+  $form['block_settings']['autoresponder_subscribed_page'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Landing page',
+    '#default_value' => variable_get('autoresponder_subscribed_page', ''),
+    '#description' => t('Where to redirect visitor after subscription')
   );
   $form['general_settings'] = array(
     '#type' => 'fieldset',
@@ -1192,8 +1222,8 @@ function autoresponder_email_enter_form($form_state) {
     $form['email'] = array(
       '#type' => 'textfield',
       '#title' => t('E-mail'),
-      '#size' => 25,
-      '#description' => t('Enter your e-mail to sign up for a series of emails'),
+      '#size' => t(variable_get('autoresponder_size', 25)),
+      '#description' => t(variable_get('autoresponder_remark', FALSE)),
       '#required' => TRUE,
       '#weight' => 1
     );
@@ -1249,12 +1279,6 @@ function autoresponder_email_enter_form($form_state) {
     $sid = key($sets);
     $s = array_pop($sets);
     $sd = array_pop($sets_descr);
-    $form['set_name'] = array(
-      '#type' => 'item',
-      '#title' => t('Set'),
-      '#value' => $s,
-      '#description' => $sd,
-    );
     $form['set'] = array(
       '#type' => 'value',
       '#value' => $sid
@@ -1266,7 +1290,7 @@ function autoresponder_email_enter_form($form_state) {
         '#type' => 'select',
         '#title' => t('Set'),
         '#options' => $sets,
-        '#description' => t('Select set'),
+        '#description' => t(variable_get('autoresponder_select_label', FALSE)),
         '#required' => TRUE,
       );
     }
@@ -1286,7 +1310,7 @@ function autoresponder_email_enter_form($form_state) {
   }
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Subscribe'),
+    '#value' => t(variable_get('autoresponder_submit', 'Subscribe')),
     '#weight' => 3
   );
   return $form;
@@ -1479,7 +1503,7 @@ function autoresponder_email_enter_form_submit($form, &$form_state) {
       }
     }
   }
-  drupal_goto();
+  drupal_goto(variable_get('autoresponder_subscribed_page', FALSE), array('subscribed' => implode($form_state['values']['set'], ",")));
 }
 
 function autoresponder_user_delete_confirm_submit($form, &$form_state) {
