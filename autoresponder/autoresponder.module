@@ -253,6 +253,12 @@ function autoresponder_admin_settings() {
     '#default_value' => variable_get('autoresponder_footer', "<br /><small>-------------------------<br />To view this message in the web follow this link <a href='!url_view'>!url_view</a></small>
        <br /><small>To unsubscribe from the list follow this link <a href='!url_unsubscribe'>!url_unsubscribe</a></small>")
   );
+  $form['general_settings']['autoresponder_secret_token'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Secret token',
+    '#default_value' => variable_get('autoresponder_secret_token', 'bflmpsvz'),
+    '#description' => t('Secret to generate signatures')
+  );
   $form['default_set_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Default set settings'),
@@ -321,7 +327,7 @@ function autoresponder_user_unsubscribe_confirm_form() {
   if ($m != $user->mail && $user->uid != 0) {
     return drupal_access_denied();
   }
-  if (md5($m) != $hash && $user->uid == 0) {
+  if (signature($m) != $hash && $user->uid == 0) {
     return drupal_access_denied();
   }
   if ($id) {
@@ -421,7 +427,7 @@ function autoresponder_mail($u, $mail) {
 
   $plain_text_only = FALSE;
   $plain_text_body = autoresponder_html_to_text($mail->body, array());
-  $hash = md5($mail->to);
+  $hash = signature($mail->to);
   $url_unsubscribe = url('autoresponder/unsubscribe/'.$u->setid.'/'.$u->uid.'/'.$hash, array('absolute' => TRUE));
   $url_view = url('autoresponder/mail/'.$u->setid.'/'.$mail->id.'/'.$u->uid.'/'.$hash, array('absolute' => TRUE));
   $footer = t(variable_get('autoresponder_footer', "<br /><small>-------------------------<br />To view this message in the web follow this link <a href='!url_view'>!url_view</a></small><br /><small>To unsubscribe from the list follow this link <a href='!url_unsubscribe'>!url_unsubscribe</a></small>"), array('!url_view' => $url_view, '!url_unsubscribe' => $url_unsubscribe));
@@ -449,7 +455,7 @@ function autoresponder_mail_show_form($form_state) {
   $result = db_query($sql, $uid, $sid);
   if (!($u = db_fetch_object($result)))
     return drupal_not_found();
-  if (md5($u->email) != $hash)
+  if (signature($u->email) != $hash)
     return drupal_access_denied();
 
   $form['subject'] = array(
@@ -1624,5 +1630,9 @@ function _autoresponder_admin_menu_block_page() {
     $output = t('You do not have any administrative items.');
   }
   return $output;
+}
+
+function signature($m) {
+	return md5($m.variable_get('autoresponder_secret_token', 'bflmpsvz'));
 }
 
