@@ -3,7 +3,12 @@
 // $Id: autoresponder.module,v 1.7.4.7 2010/02/22 21:31:40 cyberpunk Exp $
 
 function autoresponder_perm() {
-  return array('configure autoresponder', 'autoresponder massmail');
+  return array(
+    'configure autoresponder',
+    'autoresponder massmail',
+    'autoresponder messages',
+    'autoresponder sets'
+  );
 }
 
 function autoresponder_menu() {
@@ -89,71 +94,85 @@ function autoresponder_menu() {
     'type' => MENU_CALLBACK,
   );
 
-  $items['admin/settings/autoresponder/mail/list'] = array(
+  $items['admin/settings/autoresponder/mail'] = array(
     'title' => 'Messages',
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder messages'),
     'page callback' => 'autoresponder_mail_list',
     'page arguments' => array(4, 5),
-    'description' => 'Messages overview',
-    'weight' => 2
+    'description' => 'Messages overview'
+  );
+  $items['admin/settings/autoresponder/mail/list'] = array(
+    'title' => 'Messages List',
+    'access arguments' => array('autoresponder messages'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'page callback' => 'autoresponder_mail_list',
+    'page arguments' => array(4, 5),
+    'weight' => 0
   );
   $items['admin/settings/autoresponder/mail/add'] = array(
     'title' => 'Add message',
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder messages'),
     'page callback' => 'autoresponder_mail_list',
     'page arguments' => array(4, 5),
     'type' => MENU_LOCAL_TASK,
-    'weight' => 3
+    'weight' => 1
   );
   $items['admin/settings/autoresponder/mail/edit'] = array(
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder messages'),
     'page callback' => 'autoresponder_mail_list',
     'page arguments' => array(4, 5),
-    'type' => MENU_CALLBACK,
+    'type' => MENU_CALLBACK
   );
   $items['admin/settings/autoresponder/mail/delete'] = array(
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder messages'),
     'page callback' => 'autoresponder_mail_list',
     'page arguments' => array(4, 5),
-    'type' => MENU_CALLBACK,
-  );
-  $items['admin/settings/autoresponder/set/list'] = array(
-    'title' => 'Sets',
-    'access arguments' => array('configure autoresponder'),
-    'page callback' => 'autoresponder_set_list',
-    'page arguments' => array(4, 5),
-    'description' => 'E-mails sets overview',
-    'weight' => 4
+    'type' => MENU_CALLBACK
   );
 
+  $items['admin/settings/autoresponder/set'] = array(
+    'title' => 'Sets',
+    'access arguments' => array('autoresponder sets'),
+    'page callback' => 'autoresponder_set_list',
+    'page arguments' => array(4, 5),
+    'description' => 'E-mails sets overview'
+  );
+  $items['admin/settings/autoresponder/set/list'] = array(
+    'title' => 'Sets List',
+    'access arguments' => array('autoresponder sets'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'page callback' => 'autoresponder_set_list',
+    'page arguments' => array(4, 5),
+    'weight' => 0
+  );
   $items['admin/settings/autoresponder/set/add'] = array(
     'title' => 'Add set',
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder sets'),
     'page callback' => 'autoresponder_set_list',
     'page arguments' => array(4, 5),
     'type' => MENU_LOCAL_TASK,
-    'weight' => 5
+    'weight' => 1
   );
   $items['admin/settings/autoresponder/set/activate'] = array(
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder sets'),
     'page callback' => 'autoresponder_set_list',
     'page arguments' => array(4, 5),
     'type' => MENU_CALLBACK,
   );
   $items['admin/settings/autoresponder/set/deactivate'] = array(
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder sets'),
     'page callback' => 'autoresponder_set_list',
     'page arguments' => array(4, 5),
     'type' => MENU_CALLBACK,
   );
   $items['admin/settings/autoresponder/set/edit'] = array(
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder sets'),
     'page callback' => 'autoresponder_set_list',
     'page arguments' => array(4, 5),
     'type' => MENU_CALLBACK,
   );
   $items['admin/settings/autoresponder/set/delete'] = array(
-    'access arguments' => array('configure autoresponder'),
+    'access arguments' => array('autoresponder sets'),
     'page callback' => 'autoresponder_set_list',
     'page arguments' => array(4, 5),
     'type' => MENU_CALLBACK,
